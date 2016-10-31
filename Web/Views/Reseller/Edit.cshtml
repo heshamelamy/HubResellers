@@ -1,0 +1,92 @@
+﻿@model HubManPractices.Service.ViewModels.ResellerViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (TempData["EditFail"]!=null)
+{
+    <div class="alert alert-danger">@TempData["Edit Fail"]</div>
+}
+
+@if (TempData["EditError"] != null)
+{
+    <div class="alert alert-danger">@TempData["EditError"]</div>
+}
+<head>
+    <title>Edit Reseller</title>
+    <link href="~/Content/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+
+
+<div class="contactContainer">
+    <div class="banner">
+        <div>Edit</div>
+    </div>
+    @using (Html.BeginForm("Edit", "Reseller", FormMethod.Post, new {@id="contactItem"}))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("ResellerID", Model.ResellerID)
+        <label for="Name">@Html.DisplayNameFor(model=>model.Name)</label>
+        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { placeholder = "Enter Full Name" } })
+        if(User.IsInRole("Global Admin"))
+        {
+             <label for="ClientsQuota">@Html.DisplayNameFor(model => model.ClientsQuota)</label>
+            @Html.EditorFor(model => model.ClientsQuota, new { htmlAttributes = new { placeholder = "Enter Clients Quota" } })
+        
+        }
+        <input type="submit" value="Save" />
+    }
+</div>
+
+
+    
+    
+    
+    
+    
+    <!--
+         <div class="form-horizontal">
+        <h4>ResellerViewModel</h4>
+        <hr />
+        @@Html.ValidationSummary(true)
+        <div class="form-group">
+            @@Html.Hidden("ResellerID",Model.ResellerID)
+        </div>
+
+        <div class="form-group">
+            @@Html.LabelFor(model => model.Name, new { @@class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @@Html.EditorFor(model => model.Name)
+                @@Html.ValidationMessageFor(model => model.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @@*if (User.IsInRole("Global Admin"))
+               {
+                     @@Html.LabelFor(model => model.ClientsQuota, new { @@class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @@Html.EditorFor(model => model.ClientsQuota)
+                        @@Html.ValidationMessageFor(model => model.ClientsQuota)
+                    </div>
+               }
+               else
+                 {
+                     @@Html.Hidden("ClientsQuota",Model.ClientsQuota)
+                 }*@@
+              
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+
+
+    -->
+   

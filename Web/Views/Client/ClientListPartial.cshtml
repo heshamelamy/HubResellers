@@ -1,0 +1,181 @@
+﻿@model PagedList.IPagedList<HubManPractices.Service.ViewModels.ClientViewModel>
+@using PagedList;
+@using PagedList.Mvc;
+@using Newtonsoft.Json;
+@using HubManPractices.Service.ViewModels;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+<div class="client">
+    <div id="box"></div>
+    <div class="clientDetails">
+        <div id="clientitem">All Clients</div>
+        <div id="clientCount">@Model.Count from 
+        @if(Model.Count==0)
+        {
+            @: 0
+        }
+        else
+        {
+            @Model.FirstOrDefault().reseller.Clients.Count
+        }
+        </div>
+    </div>
+    <div class="clientHeader">
+        <div class="clientHeaderRow">
+            <div class="clientHeaderItem wHash">#</div>
+            <div class="clientHeaderItem wClient">
+                @Html.DisplayNameFor(m => m.FirstOrDefault().ClientName)
+            </div>
+            <div class="clientHeaderItem wStatus">
+                @Html.DisplayNameFor(m => m.FirstOrDefault().Status)
+            </div>
+            <div class="clientHeaderItem wContact">
+                @Html.DisplayNameFor(m => m.FirstOrDefault().ContactNumber)
+            </div>
+            <div class="clientHeaderItem wExpiry">
+                @Html.DisplayNameFor(m => m.FirstOrDefault().Expiry)
+            </div>
+            <div class="clientHeaderItem wAction">
+                ACTIONS
+            </div>
+        </div>
+    </div>
+    <div class="clientBody list">
+        @{
+            var i=0;
+            if (Model.PageNumber==1)
+            {
+                i = Model.PageNumber-1;
+            }
+            else
+            {
+                i = Model.PageNumber*Model.PageSize;
+                i -= 2;
+            }
+        }
+
+        @foreach (var item in Model)
+        {
+            ++i;
+            <div class="clientBodyRow">
+                <div class="clientBodyItem wHash"><p class="hash">@i</p></div>
+                <div class="clientBodyItem wClient"><p class="name">@item.ClientName</p></div>
+                <div class="clientBodyItem wStatus"><p class="status">@item.Status</p></div>
+                <div class="clientBodyItem wContact"><p class="number">@item.ContactNumber</p></div>
+                @if (item.IsExpiryNull == true)
+                {
+                    <div class="clientBodyItem wExpiry"><p class="date">No Expiry Yet</p></div>
+                }
+                else
+                {
+                    <div class="clientBodyItem wExpiry"><p class="date">@item.Expiry.ToString("MM - dd - yy")</p></div>
+                }
+                <div class="clientBodyItem wAction">
+                    @if (Html.Action("HasPermission", "Client", new { pname = "Upgrade Client" }).ToString() == "True" && item.Status != "On Hold" && item.Status != "Waiting For Renewal")
+                    {
+                        using (Html.BeginForm("Activate", "Client", FormMethod.Post, new { @style = "display:inline-block" }))
+                        {
+                            @Html.Hidden("ClientID", item.ClientID)
+                            <button id=@item.ClientID data-color="upgrade" class="upgradeIcon" ><i class="fa fa-arrow-up"></i></button>
+                        }
+
+                    }
+                    @if (Html.Action("HasPermission", "Client", new { pname = "Delete Client" }).ToString() == "True")
+                    {
+                        using (Html.BeginForm("Delete", "Client", FormMethod.Post, new { @style = "display:inline-block" }))
+                        {
+                            @Html.Hidden("ClientID", item.ClientID)
+                            <button data-color="delete"><i class="fa fa-times"></i></button>
+                        }
+                    }
+                    @if (Html.Action("HasPermission", "Client", new { pname = "Suspend Client" }).ToString() == "True" && item.Status != "Suspended" && item.Status != "On Hold" && item.Status != "Waiting For Renewal")
+                    {
+                        using (Html.BeginForm("Suspend", "Client", FormMethod.Post, new { @style = "display:inline-block" }))
+                        {
+                            @Html.Hidden("ClientID", item.ClientID)
+                            <button data-color="suspend"><i class="fa fa-pause"></i></button>
+                        }
+                    }
+                    @if (Html.Action("HasPermission", "Client", new { pname = "Activate Client" }).ToString() == "True" && item.Status != "Activated" && item.Status != "Waiting For Renewal")
+                    {
+                        using (Html.BeginForm("Activate", "Client", FormMethod.Post, new { @style = "display:inline-block" }))
+                        {
+                            @Html.Hidden("ClientID", item.ClientID)
+                            <button type="submit" data-color="check"><i class="fa fa-check"></i></button>
+                        }
+                    }
+                    @if (Html.Action("HasPermission", "Client", new { pname = "Renew Client" }).ToString() == "True" && item.Expiry <= DateTime.Now && !item.IsExpiryNull)
+                    {
+                        using (Html.BeginForm("Renew", "Client", FormMethod.Post, new { @style = "display:inline-block" }))
+                        {
+                            @Html.Hidden("ClientID", item.ClientID)
+                            @*<input type="submit" value="Renew" data-type="renew" />*@
+                        }
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+            new { page, ResellerID = TempData["ResellerID"], sortOrder = ViewBag.CurrentSort }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "ClientList", OnSuccess = "animate" }))
+
+
+    <div class="guid">
+        <ul>
+            <li><i class="fa fa-arrow-up" data-color="upgrade"></i>Upgrade</il>
+            <li><i class="fa fa-times" data-color="delete"></i>Delete</li>
+            <li><i class="fa fa-pause" data-color="suspend"></i>Suspend</li>
+            <li><i class="fa fa-check" data-color="check"></i>Activate</li>
+        </ul>
+    </div>
+</div>
+<div class="overlay">
+    <div class="popup">
+        <div class="popupHeader">
+            <i class="fa fa-pencil" aria-hidden="true"></i>
+            <div id="popupTitle">Add / Edit</div>
+            <div class="popupExit">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+        </div>
+        <div class="popupBody">
+            @using (Html.BeginForm("Upgrade", "Client", FormMethod.Post))
+            {
+                @Html.Hidden("ClientUpgradeID","")
+                <input id="SeatsUpgrade" name="SeatsUpgrade" type="number" placeholder="Enter Number Of Seats You Want.." />
+                <input type="submit" value="Upgrade" />
+            }
+        </div>
+    </div>
+</div>
+
+<script src="http://listjs.com/no-cdn/list.js"></script>
+<script src="~/scripts/jquery-3.1.1.min.js"></script>
+<script src="~/scripts/script.js"></script>
+<script src="~/scripts/list.js/dist/list.js"></script>
+<script>
+    $(".upgradeIcon").click(
+      function (e) {
+          var passedID = $(this).attr('id');
+          var arr = @Html.Raw(@JsonConvert.SerializeObject(Model.Select(x => new { x.ClientID, x.Seats }), new JsonSerializerSettings
+          { PreserveReferencesHandling = PreserveReferencesHandling.All }));
+          var Items = arr["$values"];
+          var Item = Items.filter(function (a) {
+              if(a.ClientID == passedID)
+                  return a;
+          });
+          var seats= Item[0]["Seats"];
+          document.getElementById("SeatsUpgrade").value=seats;
+          document.getElementById("ClientUpgradeID").value=passedID;
+          
+          e.preventDefault();
+          $(".overlay").css("visibility", " visible");
+      });
+          
+        
+   
+
+     
+</script>

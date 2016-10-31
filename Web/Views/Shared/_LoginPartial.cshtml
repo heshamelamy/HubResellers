@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{    
+    <div class="setting">
+        <ul>
+            <li>
+                Welcome: @Html.ActionLink(User.Identity.GetUserName(), "Manage", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })
+            </li>
+            <!--<li><a href="#"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+            <li><a href="#"><i class="fa fa-gear" aria-hidden="true"></i></a>-->
+            <li class="drop-down-list">
+                <ul class="drop-down">
+                    <li><a href="javascript:document.getElementById('logoutForm').submit()">Logout<i class="fa fa-sign-out" aria-hidden="true"></i></a></li>
+                </ul>
+            </li>
+            <!--<li><a href="#">عربي</a></li>-->
+
+        </ul>
+    </div>
+
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+    {
+        @Html.AntiForgeryToken()   
+    }
+}
+

@@ -1,0 +1,115 @@
+﻿@using Microsoft.AspNet.Identity;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/scripts/jquery.unobtrusive-ajax.js"></script>
+    <link rel="stylesheet" href="~/Content/style.css" />
+    @RenderSection("scripts", required: false)
+    @RenderSection("Styles", false)
+
+</head>
+<body>
+    
+    @{
+        string image;
+        if (User.Identity.IsAuthenticated)
+        {
+            image = Html.Action("GetImageUrl", "Reseller", new { UserID = User.Identity.GetUserId() }).ToString();
+        }
+        else
+        {
+            image = "";
+        }
+    }
+ 
+    <div class="nav" style="background-image:url(@image.Replace("~","").ToString()">
+        <div class="toggleIcon">
+            <a href="#" class="toggleAction"><i class="fa fa-bars" aria-hidden="true"></i></a>
+            <a href="#" class="toggleAction"><i class="fa fa-times" aria-hidden="true"></i></a>
+        </div>
+        <div class="navLeft">
+            <a href="#">
+                <img src="/Content/Images/logo.png"alt="Itworx Hub"/>
+            </a>
+        </div>
+        <div class="mobileNavContainer">
+            <div class="mobileNavBg"></div>
+            <div class="mobileNav">
+                <ul class="mobileAction">
+                    <li><a href="@Url.Action("ResellerIndex", "Reseller", new { ResellerID = Html.Action("GetResellerID", "Reseller", new { UserID = User.Identity.GetUserId() }) })"><i class="fa fa-th" aria-hidden="true"></i>Welcome</a></li>
+                    <li><a href="@Url.Action("Index", "Client", new { ResellerID = Html.Action("GetResellerID", "Reseller", new { UserID = User.Identity.GetUserId() })})"><i class="fa fa-briefcase" aria-hidden="true"></i>Clients</a></li>
+                    <li><a href="#"><i class="fa fa-pie-chart" aria-hidden="true"></i>Statistics</a></li>
+                </ul>
+                <hr />
+                <ul class="profile">
+                    <li><a href="#"><i class="fa fa-user" aria-hidden="true"></i>profile</a></li>
+                    <li class="noIcon"><a href="javascript:document.getElementById('logoutForm').submit()">Signout</a></li>
+                </ul>
+                <hr />
+                <ul class="privacy">
+                    <li class="noIcon"><a href="#">Help</a></li>
+                    <li class="noIcon"><a href="#">Contact Us</a></li>
+                    <li class="noIcon"><a href="#">Privacy</a></li>
+                </ul>
+                @*<hr />
+                <ul class="lan">
+                    <li class="noIcon"><a href="#">عربي</a></li>
+                </ul>*@
+            </div>
+        </div>
+        <div class="navRight">
+            <div class="brand-logo">
+                <a href="#">
+                    <img src="~/Content/Images/zain-logo.png" alt="zain logo"/>
+                </a>
+            </div>
+
+            <div class="action">
+                <ul>
+                    <li><a id="welcomeTag" href="@Url.Action("ResellerIndex", "Reseller", new { ResellerID = Html.Action("GetResellerID", "Reseller", new { UserID = User.Identity.GetUserId() }) })"><i class="fa fa-th" aria-hidden="true"></i>Welcome</a></li>
+                    <li><a id="clientsTag" href="@Url.Action("Index", "Client", new { ResellerID = Html.Action("GetResellerID", "Reseller", new { UserID = User.Identity.GetUserId() })})" ><i class="fa fa-briefcase" aria-hidden="true"></i>Clients</a></li>
+                    <li><a href="#"><i class="fa fa-pie-chart" aria-hidden="true"></i>Statistics</a></li>
+                </ul>
+            </div>
+            @Html.Partial("_LoginPartial")
+        </div>
+    </div>
+  
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+    <script>
+        $(document).ready(function () {
+            var pathname = window.location.pathname;
+            if (pathname == "/Client/Index")
+            {
+                document.getElementById("clientsTag").className="active";
+            }
+            else
+            {
+                document.getElementById("welcomeTag").className = "active";
+            }
+        });
+      
+    </script>
+    <script src="~/scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/scripts/script.js"></script>
+    <footer>
+        <div class="copyright">All copyrights are reserved for ITWORX hub 2016</div>
+        <div class="policy">
+            <ul>
+                <li><a href="#">Help</a></li>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Privacy</a></li>
+            </ul>
+        </div>
+    </footer>
+</body>
+</html>

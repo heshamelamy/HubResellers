@@ -1,0 +1,117 @@
+﻿@model Tuple<HubManPractices.Service.ViewModels.ClientViewModel, IEnumerable<HubManPractices.Service.ViewModels.OfficeSubscriptionViewModel>>
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (TempData["Exists"] != null)
+{
+    <div class="alert alert-danger">@TempData["Exists"]</div>
+}
+@if (TempData["ErrorCreate"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorCreate"]</div>
+}
+
+@if (TempData["ReAddError"] != null)
+{
+    <div class="alert alert-danger">@TempData["ReAddError"]</div>
+}
+
+
+
+@if (TempData["ReActivateError"] != null)
+{
+    <div class="alert alert-danger">@TempData["ReActivateError"]</div>
+}
+<div class="banner">
+    <div>Create View Module</div>
+</div>
+<div id="users" class="clientForm">
+    <div class="client">
+        <div id="box"></div>
+
+        <div class="contactContainer">
+
+
+                @using (Html.BeginForm("SendEmail", "Account", FormMethod.Post, new { @id = "contactItem" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.ValidationSummary(true)
+
+                    @Html.Hidden("ResellerID", TempData["ResellerID"])
+
+                    <label for="Item1.ClientName">@Html.DisplayNameFor(model => model.Item1.ClientName)</label>
+                    @Html.EditorFor(model => model.Item1.ClientName, new { htmlAttributes = new { placeholder = "Enter Client Name" } })
+                    @Html.ValidationMessageFor(model => model.Item1.ClientName)
+
+
+                    <label for="Item1.ContactName">@Html.DisplayNameFor(model => model.Item1.ContactName)</label>
+                    @Html.EditorFor(model => model.Item1.ContactName, new { htmlAttributes = new { placeholder = "Enter Contact Name" } })
+                    @Html.ValidationMessageFor(model => model.Item1.ContactName)
+
+
+                    <label for="Item1.ContactTitle">@Html.DisplayNameFor(model => model.Item1.ContactTitle)</label>
+                    @Html.EditorFor(model => model.Item1.ContactTitle, new { htmlAttributes = new { placeholder = "Enter Contact Title" } })
+                    @Html.ValidationMessageFor(model => model.Item1.ContactTitle)
+
+
+                    <label for="Item1.Location">@Html.DisplayNameFor(model => model.Item1.Location)</label>
+                    @Html.EditorFor(model => model.Item1.Location, new { htmlAttributes = new { placeholder = "Enter Your Location.." } })
+                    @Html.ValidationMessageFor(model => model.Item1.Location)
+
+
+
+                    <label for="Item1.ContactNumber">@Html.DisplayNameFor(model => model.Item1.ContactNumber)</label>
+                    @Html.EditorFor(model => model.Item1.ContactNumber, new { htmlAttributes = new { placeholder = "Enter Contact Number" } })
+                    if (TempData["NumberWrongFormat"] != null)
+                    {
+                        @Html.ValidationMessage("ContactNumber", TempData["NumberWrongFormat"])
+                    }
+
+                    <label for="Item1.ContactMail">@Html.DisplayNameFor(model => model.Item1.ContactMail)</label>
+                    @Html.EditorFor(model => model.Item1.ContactMail, new { htmlAttributes = new { placeholder = "Enter Contact Mail" } })
+                    if (TempData["EmailWrongFormat"] != null)
+                    {
+                        @Html.ValidationMessage("ContactMail", TempData["EmailWrongFormat"])
+                    }
+
+
+                    <label for="Item1.Seats">@Html.DisplayNameFor(model => model.Item1.Seats)</label>
+                    @Html.EditorFor(model => model.Item1.Seats, new { htmlAttributes = new { placeholder = "Enter Number Of Seats.." } })
+                    @Html.ValidationMessageFor(model => model.Item1.Seats)
+
+                    <div id="officeItemY">
+                        @foreach (var Sub in Model.Item2)
+                        {
+                            <label for=@Sub.SubscriptionName.Replace(" ","_").ToString()>@Sub.SubscriptionName</label>
+                            @Html.Hidden(Sub.MonthlyFee.ToString(), Sub.SubscriptionID)
+                            @Html.TextBox(Sub.SubscriptionName, null, new { @type = "number", @placeholder = "Enter Number of " + Sub.SubscriptionName + " you have.." })
+                        }
+                        <input type="submit" value="Create" />
+                    </div>
+
+
+                    
+                }
+
+            </div>
+        </div>
+    </div>
+<div class="footer">
+    <div class="copyright">All copyrights are reserved for ITWORX hub 2016</div>
+    <div class="policy">
+        <ul>
+            <li><a href="#">Help</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy</a></li>
+        </ul>
+    </div>
+</div>
+<script src="~/scripts/jquery-3.1.1.min.js"></script>
+    @section scripts
+{
+        <script type="text/javascript" src="@Url.Content("/Scripts/script.js")"></script>
+    }

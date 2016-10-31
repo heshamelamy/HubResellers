@@ -1,0 +1,81 @@
+﻿@using HubManPractices.Service.ViewModels
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="@Url.Content("~/Content/style.css")" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="wrapper">
+        <div class="loginAbout">
+            <a href="#"><img src="/Content/Images/logo.PNG" alt="" /></a>
+            <div class="info">
+                <h3>Itworx Hub Reseller Zone</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam pariatur delectus reiciendis obcaecati repudiandae quia.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ea deserunt repellendus illum. Distinctio culpa delectus vitae sunt consequatur, deserunt nemo, animi ipsa facilis possimus modi expedita id, totam.</p>
+            </div>
+        </div>
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form", @class = "login" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="loginDetails">
+                <div>Welcome back</div>
+                @Html.TextBoxFor(m => m.UserName, new { @placeholder = "Username" })
+                @Html.ValidationMessageFor(m => m.UserName)
+                @Html.TextBoxFor(m => m.Password, new { type = "password", @placeholder = "Password" })
+                @Html.ValidationMessageFor(m => m.Password)
+                <input type="submit" value="LOGIN" />
+            </div>
+        }
+    </div>
+</body>
+</html>
+
+<!--
+<h2>@@ViewBag.Title.</h2>
+<div class="contactContainer">
+    <div class="banner">
+        <div>Log In</div>
+        <div>Use A Local Account To Log In</div>
+    </div>
+        <section id="loginForm">
+           @* @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form",@id="contactItem" }))
+            {
+                @Html.AntiForgeryToken()
+                 
+                    <label for="UserName">@Html.DisplayNameFor(model => model.UserName)</label>
+                    @Html.TextBoxFor(m => m.UserName, new {@placeholder="UserName" })
+                    @Html.ValidationMessageFor(m => m.UserName)
+                
+                    <label for="Password">@Html.DisplayNameFor(model => model.Password)</label>
+                    @Html.TextBoxFor(m => m.Password, new {type="password",@placeholder="Enter Your Password" })
+                    @Html.ValidationMessageFor(m => m.Password)
+                    
+                    <div id="checkbox">
+                        @Html.CheckBoxFor(m => m.RememberMe)
+                        <label for="RememberMe">@Html.DisplayNameFor(model => model.RememberMe)</label>
+                    </div>
+                    <input type="submit" value="Log in"/>
+         
+                @* Enable this once you have account confirmation enabled for password reset functionality
+                    <p>
+                        @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                    </p>
+            }*@
+    </section>
+    </div>
+    -->
+        
+    <!--
+        <div class="col-md-4">
+        <section id="socialLoginForm">
+            @@Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+        </section>
+    </div> 
+-->
+
+

@@ -1,0 +1,42 @@
+﻿@model HubManPractices.Service.ViewModels.ClientViewModel
+
+@{
+    ViewBag.Title = "Exist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Exist</h2>
+
+@if (TempData["NameAndMailExistsAndDeleted"] != null)
+{
+    <div class="alert alert-info">@TempData["NameAndMailExistsAndDeleted"]</div>
+    
+    using (Html.BeginForm("Reactivate", "Client", FormMethod.Post, new { @style = "display:inline-block" }))
+    {
+        @Html.Hidden("ClientName", Model.ClientName)
+        @Html.Hidden("ContactMail", Model.ContactMail)
+        <input type="submit" value="Reactivate With Old Data" class="btn btn-danger btn-xs" style="margin-right:30px" />
+    }
+
+    using (Html.BeginForm("ReAdd", "Client", FormMethod.Post, new {@style= "display:inline-block"}))
+    {
+         @Html.HiddenFor(m => m.ClientName)
+         @Html.HiddenFor(m => m.ContactMail)
+         @Html.HiddenFor(m => m.ContactName)
+         @Html.HiddenFor(m => m.ContactNumber)
+         @Html.HiddenFor(m => m.ContactTitle)
+         @Html.HiddenFor(m=>m.Seats)
+         @Html.HiddenFor(m => m.CreationDate)
+         @Html.HiddenFor(m => m.Location)
+         @Html.Hidden("Status", "On Hold")
+         @Html.HiddenFor(m => m.Expiry)
+    
+        foreach(var Sub in Model.ClientSubscriptions)
+        {
+            @Html.Hidden(Sub.OfficeSubscription.SubscriptionName.ToString(),Sub.OfficeSubscription.SubscriptionName)
+            @Html.Hidden(Sub.OfficeSubscription.MonthlyFee.ToString(),Sub.UsersPerSubscription)
+        }
+        <input type="submit" value="Reactivate With New Data" class="btn btn-success btn-xs" />   
+    }
+                      
+}

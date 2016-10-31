@@ -1,0 +1,209 @@
+﻿@model HubManPractices.Service.ViewModels.ResellerIndexViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Content/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/Content/owl.theme.default.css">
+</head>
+<body>
+    @{
+        int TotalEmployees = 0;
+        foreach (var client in Model.Clients)
+        {
+            TotalEmployees += client.Seats;
+        }
+    }
+    <div id="welcome">
+        <div class="welcomeOverview">
+            <div class="welcomeBody">
+                <div class="welcomeName">Clients Overview</div>
+                <div class="welcomeDetails">
+                    <div class="welcomeItem">
+                        <i class="fa fa-briefcase" aria-hidden="true"></i>
+                        <div id="clientNumber">@Model.Clients.Count()</div>
+                        <div class="itemName">Clients</div>
+                    </div>
+                    <div class="welcomeItem">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <div id="empNumber">@TotalEmployees</div>
+                        <div class="itemName">Employees</div>
+                    </div>
+                    <!--<div class="welcomeItem">
+                         <i class="fa fa-database" aria-hidden="true"></i>
+                         <div id="quotaNumber">62%</div>
+                         <div class="itemName">Quota</div>
+                    </div> -->
+                </div>
+            </div>
+            <div class="viewClient">
+                <img src="~/Content/Images/layout.png" alt="">
+                <div><a href="@Url.Action("Index", "Client", new { ResellerID = Model.Clients.FirstOrDefault().ResellerID })">View/Edit Clients <i class="fa fa-arrow-circle-right"></i></a></div>
+            </div>
+            <div class="addClient" id="addClient">
+                <img src="~/Content/Images/human.png" alt="">
+                <div><a href="@Url.Action("Create", "Client", new { ResellerID = Model.Clients.FirstOrDefault().ResellerID })">Add New Client <i class="fa fa-arrow-circle-right"></i></a></div>
+            </div>
+        </div>
+        <div class="welcomeStatistic">
+            <div class="statisticBody">
+                <div class="statisticName">Statistic</div>
+            </div>
+            <div class="statisticDetails">
+                Monthly Installations
+            </div>
+            <div id="chart">
+                <ul id="bars">
+                    @foreach (var item in Model.ChartData)
+                    {
+                        <li><div data-percentage="@item.Value" class="bar"></div><span>@item.Key</span></li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="recentClients">
+            <div class="recentName">Your Recent Clients</div>
+            <div class="viewAll"><a href="@Url.Action("Index", "Client", new { ResellerID = Model.Clients.FirstOrDefault().ResellerID })">View All  <i class="fa fa-arrow-circle-right"></i></a></div>
+            <div id="recentContainer" class="owl-carousel">
+                @foreach (var client in Model.RecentClients)
+                {
+
+                <div class="recentDetails ">
+                    <div class="clientLeft">
+                        <div><a href="">@client.ClientName</a></div>
+                        <div class="clientLoc"><i class="fa fa-map-marker" aria-hidden="true"></i>@client.Location</div>
+                        <div class="clientDate">Added: <span>@client.CreationDate.ToString("MM - dd - yy")</span></div>
+                    </div>
+                    <div class="clientRight">
+                        <div class="clientEmp">
+                            <p class="empNumber">@client.Seats</p>
+                            <p class="empName">Employees</p>
+                        </div>
+                        @*<div class="clientLic">
+                            <div>
+                                <p class="empNumber">E3</p>
+                                <p class="empName">Employees</p>
+                            </div>
+                        </div>*@
+                    </div>
+                </div>
+
+
+                }
+            </div>
+        </div>
+        <div class="overlay">
+            <div class="popup">
+                <div class="popupHeader">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                    <div id="popupTitle">Add / Edit</div>
+                    <div class="popupExit" id="exitAddClient">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="popupBody">
+                    @using (Html.BeginForm("SendEmail", "Account", FormMethod.Post, new { @id = "contactItem" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.ValidationSummary(true)
+
+                        @Html.Hidden("ResellerID", Model.Clients.FirstOrDefault().ResellerID)
+
+                        <input id="ClientName" name="ClientName" type="text" placeholder="Enter Client Name" />
+                        <input id="ContactName" name="ContactName" type="text" placeholder="Enter Contact Name" />
+                        <input id="ContactTitle" name="ContactTitle" type="text" placeholder="Enter Contact Title" />
+                        <input id="Location" name="Location" type="text" placeholder="Enter Your Location" />
+                        <input id="ContactNumber" name="ContactNumber" type="number" placeholder="Enter Contact Number" />
+                        if (TempData["NumberWrongFormat"] != null)
+                        {
+                            @Html.ValidationMessage("ContactNumber", TempData["NumberWrongFormat"])
+                        }
+                        <input id="ContactMail" name="ContactMail" type="text" placeholder="Enter Contact Mail" />
+                        if (TempData["EmailWrongFormat"] != null)
+                        {
+                            @Html.ValidationMessage("ContactMail", TempData["EmailWrongFormat"])
+                        }
+                        <input id="Seats" name="Seats" type="number" placeholder="Enter Number Of Seats" />
+                      
+                            foreach (var Sub in Model.AllSubs)
+                            {
+                                @Html.Hidden(Sub.MonthlyFee.ToString(), Sub.SubscriptionID)
+                                @Html.TextBox(Sub.SubscriptionName, null, new { @type = "number", @placeholder = "Enter Number of " + Sub.SubscriptionName + " you have.." })
+                            }
+                        <input type="submit" value="Add Client" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/scripts/script.js"></script>
+    <script src="~/scripts/owl.carousel.min.js"></script>
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+
+        //document.getElementById('nav').style.backgroundImage="url(@@Model.Item1.FirstOrDefault().reseller.ResellerImage.Replace("~","").ToString()";
+        var Keys = @Html.Raw(Json.Encode(Model.ChartData.Keys));
+        var Values =@Html.Raw(Json.Encode(Model.ChartData.Values));
+        var ctx = document.getElementById("myChart");
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Keys,
+                datasets: [{
+                    label: ' Number Of Clients',
+                    data: Values,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            stepSize: 1
+                        }
+                    }]
+                }
+            }
+        });
+
+    });
+   
+</script>
+
+
+
+@section scripts
+{
+    <script type="text/javascript" src="@Url.Content("/Scripts/script.js")"></script>
+}

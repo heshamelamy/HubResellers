@@ -1,0 +1,93 @@
+﻿@model Tuple<HubManPractices.Service.ViewModels.ClientViewModel, IEnumerable<HubManPractices.Service.ViewModels.OfficeSubscriptionViewModel>>
+
+@{
+    ViewBag.Title = "Upgrade";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (TempData["Upgrade Update Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Upgrade Update Error"]</div>
+}
+
+@if (TempData["Upgrade Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Upgrade Error"]</div>
+}
+
+
+
+
+<div class="banner">
+    <div>Edit Client</div>
+</div>
+<div id="users" class="clientForm">
+    <div class="client">
+        <div id="box"></div>
+        <div class="contactContainer">
+
+
+            @using (Html.BeginForm("Upgrade", "Client", FormMethod.Post, new { @id = "contactItem" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(true)
+
+                @Html.Hidden("Item1.ClientID", Model.Item1.ClientID)
+
+                <label for="Item1.ClientName">@Html.DisplayNameFor(model => model.Item1.ClientName)</label>
+                @Html.EditorFor(model => model.Item1.ClientName, new { htmlAttributes = new { placeholder = "Enter Client Name", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.Item1.ClientName)
+
+
+                <label for="Item1.ContactName">@Html.DisplayNameFor(model => model.Item1.ContactName)</label>
+                @Html.EditorFor(model => model.Item1.ContactName, new { htmlAttributes = new { placeholder = "Enter Contact Name", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.Item1.ContactName)
+
+
+                <label for="Item1.ContactTitle">@Html.DisplayNameFor(model => model.Item1.ContactTitle)</label>
+                @Html.EditorFor(model => model.Item1.ContactTitle, new { htmlAttributes = new { placeholder = "Enter Contact Title", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.Item1.ContactTitle)
+
+
+                <label for="Item1.ContactNumber">@Html.DisplayNameFor(model => model.Item1.ContactNumber)</label>
+                @Html.EditorFor(model => model.Item1.ContactNumber, new { htmlAttributes = new { placeholder = "Enter Contact Number", @readonly = "readonly" } })
+                if (TempData["NumberWrongFormat"] != null)
+                {
+                    @Html.ValidationMessage("ContactNumber", TempData["NumberWrongFormat"])
+                }
+
+                <label for="Item1.ContactMail">@Html.DisplayNameFor(model => model.Item1.ContactMail)</label>
+                @Html.EditorFor(model => model.Item1.ContactMail, new { htmlAttributes = new { placeholder = "Enter Contact Mail", @readonly = "readonly" } })
+                if (TempData["EmailWrongFormat"] != null)
+                {
+                    @Html.ValidationMessage("ContactMail", TempData["EmailWrongFormat"])
+                }
+
+                <label for="Item1.Seats">@Html.DisplayNameFor(model => model.Item1.Seats)</label>
+                @Html.EditorFor(model => model.Item1.Seats, new { htmlAttributes = new { placeholder = "Enter Number of Seats to Upgrade Title" } })
+
+
+
+
+
+                <input type="submit" value="Upgrade" />
+            }
+
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div class="copyright">All copyrights are reserved for ITWORX hub 2016</div>
+    <div class="policy">
+        <ul>
+            <li><a href="#">Help</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy</a></li>
+        </ul>
+    </div>
+</div>
+        @section scripts
+{
+            <script type="text/javascript" src="@Url.Content("/Scripts/script.js")"></script>
+        }

@@ -1,0 +1,91 @@
+﻿@model IEnumerable<HubManPractices.Service.ViewModels.ResellerViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <title>Index</title>
+</head>
+
+
+@if (TempData["EditSuccess"] != null)
+{
+    <div class="alert alert-success">@TempData</div>
+}
+
+
+
+@if (TempData["CreateSuccess"] != null)
+{
+    <div class="alert alert-success">@TempData["CreateSuccess"]</div>
+}
+
+@if (TempData["DeleteError"] != null)
+{
+    <div class="alert alert-danger">@TempData["DeleteError"]</div>
+}
+
+
+
+@if (User.IsInRole("Global Admin"))
+{
+    using (Html.BeginForm("Search", "Reseller", FormMethod.Get, new { @style = "float:left;margin-bottom:15px" }))
+    {
+        @Html.TextBox("Query", null, new { @placeholder = "Reseller Name.." })
+        <button type="submit" value="" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-search"></span></button>
+    }
+}
+
+
+
+<div class="contactContainer">
+    <div class="banner">
+        <div>Resellers</div>
+        @if(User.IsInRole("Reseller Admin"))
+        {
+            <img src="@Url.Content(Model.FirstOrDefault().ResellerImage)"/>
+        }
+        <div class="showClients">
+            @if (Html.Action("HasPermission", "Reseller", new { pname = "Add Reseller" }).ToString() == "True")
+            {
+                @Html.ActionLink("Add Reseller", "Create")
+            }
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="clientRow">
+        <div class="clientHeader">
+            <div class="clientRowHeader">
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Name)
+            </div>
+            <div class="clientRowHeader">
+                @Html.DisplayNameFor(model => model.FirstOrDefault().ClientsQuota)
+            </div>
+            <div class="clientRowHeader">
+                Action
+            </div>
+        </div>
+
+        @foreach (var item in Model)
+        {
+            <div class="clientRowBody">
+                <div class="clientRowBodyContainer">@item.Name</div>
+                <div class="clientRowBodyContainer">@item.ClientsQuota</div>
+                <div class="action">
+                    <a href="/Reseller/Edit?ResellerID=@item.ResellerID" data-type="edit">Edit</a>
+                    <a href="/Client/Index?ResellerID=@item.ResellerID" data-type="clients">Clients</a>
+                    @if (Html.Action("HasPermission", "Reseller", new { pname = "Delete Reseller" }).ToString() == "True")
+                    {
+                        using (Html.BeginForm("Delete", "Reseller", FormMethod.Post, new { @style = "display:inline-block" }))
+                        {
+                            @Html.Hidden("ResellerID", item.ResellerID)
+                            <input type="submit" value="Delete" data-type="Delete" />
+                        }
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
